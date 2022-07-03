@@ -1,0 +1,19 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@using BK2T.BankDataReporting.Localization
+@model BK2T.BankDataReporting.Web.Pages.Departments.EditModalModel
+@inject IHtmlLocalizer<BankDataReportingResource> L
+@{
+    Layout = null;
+}
+<abp-dynamic-form abp-model="Department" asp-page="/Departments/EditModal">
+    <abp-modal>
+        <abp-modal-header title="@L["Departments:Edit"].Value"></abp-modal-header>
+        <abp-modal-body>
+            <abp-form-content />
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+    </abp-modal>
+</abp-dynamic-form>
+<script>new Tagify(document.querySelector('#Department_CustomerSegments'), {delimiters: ";| "});</script>

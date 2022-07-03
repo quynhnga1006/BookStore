@@ -1,0 +1,50 @@
+﻿@page
+@using BK2T.BankDataReporting.ReportFiles
+@using BK2T.BankDataReporting.Web.Pages.ReportFiles
+@using BK2T.BankDataReporting.Permissions
+@using BK2T.BankDataReporting.Localization
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@model IndexModel
+@inject IPageLayout PageLayout
+@inject IAuthorizationService Authorization
+@inject IHtmlLocalizer<BankDataReportingResource> L
+@inject IAuthorizationService Authorization
+@{
+    PageLayout.Content.Title = L["ReportFiles"].Value;
+}
+
+@section styles
+{
+<abp-style src="/Pages/ReportFiles/Index.css" />
+}
+
+@section scripts
+{
+<abp-script src="/Pages/ReportFiles/Index.js" />
+}
+
+<section class="px-3">
+    <abp-row class="py-3">
+        <abp-column size-md="_6">
+            <h3>@L["ReportFiles"]</h3>
+        </abp-column>
+        <abp-column size-md="_6" class="text-right">
+            @if (await Authorization.IsGrantedAsync(BankDataReportingPermissions.ReportFiles.Create))
+            {
+                <abp-button id="NewReportFilesButton"
+                        text="@L["ReportFiles:Create"].Value"
+                        icon="plus"
+                        button-type="Primary" />
+            }
+        </abp-column>
+    </abp-row>
+
+    <abp-card>
+        <abp-card-body>
+            <abp-table striped-rows="true" id="ReportFileTable" />
+        </abp-card-body>
+    </abp-card>
+</section>

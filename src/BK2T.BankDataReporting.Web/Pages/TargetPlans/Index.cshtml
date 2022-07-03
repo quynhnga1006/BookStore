@@ -1,0 +1,51 @@
+﻿@page
+@using BK2T.BankDataReporting.Localization
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using BK2T.BankDataReporting.TargetPlans
+@model BK2T.BankDataReporting.Web.Pages.TargetPlans.IndexModel
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<BankDataReportingResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    PageLayout.Content.Title = L["TargetPlans"].Value;
+}
+
+@section scripts
+{
+    <abp-script src="/Pages/TargetPlans/Index.js" />
+}
+<section class="px-3">
+    <abp-row class="px-3">
+        <abp-column size-md="_12">
+            <h3>@L["TargetPlans"].Value</h3>
+        </abp-column>
+    </abp-row>
+    <abp-card class="py-3">
+        <abp-row class="px-3">
+            <abp-column size-md="_4">
+                <abp-select asp-for="@Model.ViewModel.DepartmentId" id="comboboxDepartments"/>
+            </abp-column>
+            <abp-column size-md="_4">
+                <abp-select asp-for="@Model.ViewModel.PlanType" id="comboboxPlanType" asp-items="@Html.GetEnumSelectList(typeof(PlanType))"/>
+            </abp-column>
+            <abp-column size-md="_4">
+                <abp-select asp-for="@Model.ViewModel.Years" id="comboboxYears" />
+            </abp-column>
+        </abp-row>
+        <abp-row class="px-3">
+            <abp-column size-md="_6" class="text-left">
+                <abp-button id="ReportSearchButton"
+                            text="@L["Common:Search"].Value"
+                            icon="search"
+                            button-type="Primary" />
+            </abp-column>
+        </abp-row>
+    </abp-card>
+    <abp-card>
+        <abp-card-body>
+            <abp-table striped-rows="true" id="TargetPlanTable" />
+        </abp-card-body>
+    </abp-card>
+</section>

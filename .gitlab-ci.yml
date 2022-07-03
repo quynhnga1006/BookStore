@@ -1,0 +1,103 @@
+stages:
+    - pre-check
+    - build
+    - deploy
+
+pre-check:
+    image: mcr.microsoft.com/dotnet/sdk:5.0
+    only:
+        - develop
+        - merge_requests
+    stage: pre-check
+    variables:
+        CONFIGURATION: 'Debug'
+        COVERAGE_FLAG: 'XPlat Code Coverage'
+        LOGGER_FLAG: 'junit;LogFilePath=$CI_PROJECT_DIR/junit/{assembly}-test-result.xml;MethodFormat=Class;FailureBodyFormat=Verbose'
+    before_script:
+        - 'printf "deb http://deb.debian.org/debian bullseye main contrib" >> /etc/apt/sources.list'
+        - 'apt-get update'
+        - 'apt-get install -y --allow-unauthenticated libc6'
+        - dotnet tool install dotnet-reportgenerator-globaltool --tool-path tools
+    script:
+        - 'dotnet test
+          -c $CONFIGURATION
+          --test-adapter-path:.
+          --logger:"$LOGGER_FLAG"
+          /p:CollectCoverage=true
+          /p:CoverletOutputFormat=Cobertura'
+        - ./tools/reportgenerator "-reports:${CI_PROJECT_DIR}/**/coverage.cobertura.xml" "-targetdir:Reports_Coverage" -reportTypes:TextSummary;
+        - ./tools/reportgenerator "-reports:${CI_PROJECT_DIR}/**/coverage.cobertura.xml" "-targetdir:Reports_Coverage" -reportTypes:Html;
+        - cat ./Reports_Coverage/Summary.txt
+        - echo 'End Summary'
+        - sed -i "s;filename=\"${CI_PROJECT_DIR:1}/;filename=\";" "${CI_PROJECT_DIR}/test/BK2T.BankDataReporting.Application.Tests/coverage.cobertura.xml"
+        - sed -i "s;filename=\"${CI_PROJECT_DIR:1}/;filename=\";" "${CI_PROJECT_DIR}/test/BK2T.BankDataReporting.Domain.Tests/coverage.cobertura.xml"
+        - sed -i "s;filename=\"${CI_PROJECT_DIR:1}/;filename=\";" "${CI_PROJECT_DIR}/test/BK2T.BankDataReporting.MongoDB.Tests/coverage.cobertura.xml"
+    coverage: /Line coverage[\s\S].+%/
+    artifacts:
+        when: always
+        paths:
+            - $CI_PROJECT_DIR/**/coverage.cobertura.xml
+            - $CI_PROJECT_DIR/junit/*test-result.xml
+        reports:
+            coverage_report:
+                coverage_format: cobertura
+                path: $CI_PROJECT_DIR/**/coverage.cobertura.xml
+            junit:
+                - $CI_PROJECT_DIR/junit/*test-result.xml
+
+docker-build:
+    stage: build
+    image: docker:19
+    services:
+        - docker:dind
+    only:
+        - develop
+    before_script:
+        - docker version
+        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    script:
+        - docker pull $CI_REGISTRY_IMAGE:latest || true
+        - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA --tag $CI_REGISTRY_IMAGE:latest . -f src/BK2T.BankDataReporting.Web/Dockerfile
+        - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+        - docker push $CI_REGISTRY_IMAGE:latest
+
+deploy:
+    stage: deploy
+    image: docker:19
+    services:
+        - docker:dind
+    variables:
+        GIT_STRATEGY: none
+    only:
+        - develop
+    before_script:
+        - docker version
+        - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+        - apk update && apk add openssh-client bash
+    script:
+        # chạy ssh-agent tương ứng với Gitlab Runner hiện tại
+        - eval $(ssh-agent -s)
+
+        # thêm nội dung của biến SSH_PRIVATE_KEY vào agent store
+        - bash -c 'ssh-add <(echo "$SSH_PRIVATE_KEY")'
+
+        # tạo folder ~/.ssh
+        - mkdir -p ~/.ssh
+
+        # Scan lấy SSH Host key cho địa chỉ IP server
+        # Được kết quả bao nhiêu thì thêm vào file known_hosts
+        - ssh-keyscan -H $SSH_SERVER_IP >> ~/.ssh/known_hosts
+
+        # Sửa lại quyền của file known_hosts
+        - chmod 644 ~/.ssh/known_hosts
+
+        # Thực hiện SSH vào server, login vào Registry, chuyển tới folder project
+        # Down project, pull image về, up project và xoá đi image cũ
+        - >
+            ssh $SSH_USER@$SSH_SERVER_IP
+            "docker login -u ${CI_REGISTRY_USER} -p ${CI_REGISTRY_PASSWORD} ${CI_REGISTRY};
+            cd ${PATH_TO_PROJECT};
+            docker-compose down;
+            docker pull ${CI_REGISTRY_IMAGE}:latest;
+            docker-compose up -d;
+            docker image prune -f;"

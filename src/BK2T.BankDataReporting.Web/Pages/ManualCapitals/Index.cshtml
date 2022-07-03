@@ -1,0 +1,50 @@
+﻿@page
+@using BK2T.BankDataReporting.Localization
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using BK2T.BankDataReporting.Departments.ManualCapitals
+@model BK2T.BankDataReporting.Web.Pages.ManualCapitals.IndexModel
+@{
+}
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<BankDataReportingResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    PageLayout.Content.Title = L["ManualCapitals"].Value;
+}
+
+@section scripts
+{
+    <abp-script src="/Pages/ManualCapitals/Index.js" />
+}
+<section class="px-3">
+    <abp-row class="px-3">
+        <abp-column size-md="_12">
+            <h3>@L["ManualCapitals"].Value</h3>
+        </abp-column>
+    </abp-row>
+    <abp-card class="py-3">
+        <abp-row class="px-3">
+            <abp-column size-md="_4">
+                <abp-select asp-for="@Model.ViewModel.DepartmentId" id="comboboxDepartments" />
+            </abp-column>
+            <abp-column size-md="_4">
+                <abp-select asp-for="@Model.ViewModel.Years" id="comboboxYears" />
+            </abp-column>
+        </abp-row>
+        <abp-row class="px-3">
+            <abp-column size-md="_6" class="text-left">
+                <abp-button id="ReportSearchButton"
+                            text="@L["Common:Search"].Value"
+                            icon="search"
+                            button-type="Primary" />
+            </abp-column>
+        </abp-row>
+    </abp-card>
+    <abp-card>
+        <abp-card-body>
+            <abp-table striped-rows="true" id="ManualCapitalTable" />
+        </abp-card-body>
+    </abp-card>
+</section>

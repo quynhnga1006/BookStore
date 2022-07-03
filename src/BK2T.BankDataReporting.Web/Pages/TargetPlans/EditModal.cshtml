@@ -1,0 +1,28 @@
+﻿@page
+@using Microsoft.AspNetCore.Mvc.Localization
+@model BK2T.BankDataReporting.Web.Pages.TargetPlans.EditModalModel
+@inject IHtmlLocalizer<BankDataReportingResource> L
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@using BK2T.BankDataReporting.Localization
+
+@{ Layout = null; }
+<form asp-page="/TargetPlans/EditModal">
+   
+    <abp-modal>
+        <abp-modal-header title="@L["TargetPlan:Edit"].Value"></abp-modal-header>
+        <abp-modal-body>
+            <abp-input asp-for="TargetPlan.DepartmentId" value="@Model.TargetPlan.DepartmentId"></abp-input>
+
+            <abp-input asp-for="TargetPlan.PlanType" value="@Model.TargetPlan.PlanType"></abp-input>
+
+            <abp-input asp-for="TargetPlan.Year" value="@Model.TargetPlan.Year"></abp-input>
+
+            <abp-input asp-for="@Model.TargetPlan.YearTarget"></abp-input>
+            @for (int i = 0; i < Model.TargetPlan.MonthTargets.Count; i++)
+            {
+                <abp-input asp-for="@Model.TargetPlan.MonthTargets[i]" label ="@Model.Label[i]"></abp-input>
+            }
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+    </abp-modal>
+</form>

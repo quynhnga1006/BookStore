@@ -1,0 +1,51 @@
+﻿@page
+@model BK2T.BankDataReporting.Web.Pages.ReportTemplates.IndexModel
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@using BK2T.BankDataReporting.Localization
+@using BK2T.BankDataReporting.Permissions
+@inject IPageLayout PageLayout
+@inject IAuthorizationService Authorization
+@inject IHtmlLocalizer<BankDataReportingResource> L
+
+@section scripts
+{
+    <abp-script src="/Pages/ReportTemplates/Index.js" />
+}
+<section class="px-3">
+
+    <abp-row class="py-3">
+        <abp-column size-md="_6">
+            <h3>@L["ReportTemplates"].Value</h3>
+        </abp-column>
+    </abp-row>
+
+    <abp-card>
+        <abp-card-header>
+            <abp-row class="py-3">
+                <abp-column size-md="_6" class="text-left">
+                    <select name="ReportType" id="ReportType" style="width:300px">
+                        <option value="0">@L["ReportFiles:ReportType:Deposit"].Value</option>
+                        <option value="1">@L["ReportFiles:ReportType:Loan"].Value</option>
+                        <option value="3">@L["ReportFiles:ReportType:DebtDueCustomer"].Value</option>
+                        <option value="4">@L["ReportFiles:ReportType:Collateral"].Value</option>
+                        <option value="5">@L["ReportFiles:ReportType:Provision"].Value</option>
+                    </select>
+                </abp-column>
+                <abp-column size-md="_6" class="text-right">
+                    @if (await Authorization.IsGrantedAsync(BankDataReportingPermissions.ReportTemplates.Add))
+                    {
+                        <abp-button id="NewReportTemplateButton"
+                                    text="@L["Reports:Create"].Value"
+                                    icon="plus"
+                                    button-type="Primary" />
+                    }
+                </abp-column>
+            </abp-row>
+        </abp-card-header>
+        <abp-card-body>
+            <abp-table striped-rows="true" id="ReportTemplatesTable" />
+        </abp-card-body>
+    </abp-card>
+</section>

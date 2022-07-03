@@ -1,0 +1,61 @@
+﻿@page
+@using BK2T.BankDataReporting.Localization
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@model BK2T.BankDataReporting.Web.Pages.Collaterals.IndexModel
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<BankDataReportingResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    PageLayout.Content.Title = L["MonthlyReports"].Value;
+}
+
+@section scripts
+{
+    <abp-script src="/Pages/MonthlyReports/Index.js" />
+}
+<script>
+    const reportId = '@Model.ReportId';
+    const reportType = @Model.ReportType;
+</script>
+
+<section class="px-3">
+    <abp-row class="py-3">
+        <abp-column size-md="_12">
+            <h3>@(Model.Report != null ? Model.Report.Name : L["MonthlyReports"])</h3>
+        </abp-column>
+    </abp-row>
+    <abp-card class="py-3">
+        <abp-row class="px-3">
+            <abp-column size-md="_4">
+                <abp-input asp-for="@Model.ViewModel.ReportDate" abp-data-datepicker="false" />
+            </abp-column>
+            @if (await AuthorizationService.IsGrantedAsync(BK2T.BankDataReporting.Permissions.BankDataReportingPermissions.Reports.FilterByDepartment))
+            {
+                <abp-column size-md="_4">
+                    <abp-select asp-for="@Model.ViewModel.DepartmentId" id="comboboxDepartments" />
+                </abp-column>
+            }
+            @if (await AuthorizationService.IsGrantedAsync(BK2T.BankDataReporting.Permissions.BankDataReportingPermissions.Reports.FilterByUser))
+            {
+                <abp-column size-md="_4" abp-if="Model.IsDisplay">
+                    <abp-select asp-for="@Model.ViewModel.UserId" id="comboboxUsers" />
+                </abp-column>
+            }
+        </abp-row>
+        <abp-row class="px-3">
+            <abp-column size-md="_6" class="text-left">
+                <abp-button id="ReportSearchButton"
+                            text="@L["Common:Search"].Value"
+                            icon="search"
+                            button-type="Primary" />
+            </abp-column>
+        </abp-row>
+    </abp-card>
+    <abp-card>
+        <abp-card-body>
+            <abp-table striped-rows="true" id="ReportDataTable" class="nowrap" />
+        </abp-card-body>
+    </abp-card>
+</section>

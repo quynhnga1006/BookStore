@@ -1,0 +1,95 @@
+﻿@page
+@using BK2T.BankDataReporting.Localization
+@using BK2T.BankDataReporting.ReportFiles
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@model BK2T.BankDataReporting.Web.Pages.Reports.IndexModel
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<BankDataReportingResource> L
+@inject IAuthorizationService AuthorizationService
+@{
+    PageLayout.Content.Title = L["Reports"].Value;
+}
+
+@section scripts
+{
+    <abp-script src="/Pages/Reports/Index.js" />
+    
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/pdfmake.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.1.36/vfs_fonts.js"></script>
+    <script type="text/javascript" src="https://cdn.datatables.net/v/bs4-4.6.0/jq-3.6.0/jszip-2.5.0/dt-1.12.0/af-2.4.0/b-2.2.3/b-colvis-2.2.3/b-html5-2.2.3/b-print-2.2.3/cr-1.5.6/date-1.1.2/fc-4.1.0/fh-3.2.3/kt-2.7.0/r-2.3.0/rg-1.2.0/rr-1.2.8/sc-2.0.6/sb-1.3.3/sp-2.0.1/sl-1.4.0/sr-1.1.1/datatables.min.js"></script>
+}
+<script>
+    const reportId = '@Model.ReportId';
+    const reportType = @Model.ReportType;
+    const reportName = @Json.Serialize(@Model.Report.Name);
+</script>
+
+<section class="px-3">
+    <abp-row class="py-3">
+        <abp-column size-md="_12">
+            <h3>@(Model.Report != null ? Model.Report.Name : L["Reports"])</h3>
+        </abp-column>
+    </abp-row>
+    <abp-card class="py-3">
+        <abp-row class="px-3">
+            <abp-column size-md="_4">
+                <abp-input asp-for="@Model.ViewModel.ReportDate" abp-data-datepicker="false" />
+            </abp-column>
+            @if (await AuthorizationService.IsGrantedAsync(BK2T.BankDataReporting.Permissions.BankDataReportingPermissions.Reports.FilterByDepartment))
+            {
+                <abp-column size-md="_4">
+                    <abp-select asp-for="@Model.ViewModel.DepartmentId" id="comboboxDepartments" />
+                </abp-column>
+            }
+            @if (await AuthorizationService.IsGrantedAsync(BK2T.BankDataReporting.Permissions.BankDataReportingPermissions.Reports.FilterByUser))
+            {
+                <abp-column size-md="_4">
+                    <abp-select asp-for="@Model.ViewModel.UserId" id="comboboxUsers" />
+                </abp-column>
+            }
+        </abp-row>
+        <div id="Queryable">
+            @for (int i = 0; i < Math.Ceiling(Decimal.Divide(Model.ComponentModels.Count, 3)); ++i)
+            {
+                <abp-row class="px-3">
+                    @for (int j = 0; j < 3; ++j)
+                        if (3 * i + j < Model.ComponentModels.Count)
+                        {
+                            <abp-column size-md="_4">
+                                @if (Model.ComponentModels[3 * i + j].Type == ReportItemDataType.Date)
+                                {
+                                    <abp-input asp-for="ComponentModels[3 * i + j].DateTime"
+                                               label="@Model.ComponentModels[3 * i + j].Label"
+                                               id="@Model.ComponentModels[3 * i + j].Key"
+                                               abp-data-datepicker="false">
+                                    </abp-input>
+                                }
+                                else
+                                {
+                                    <abp-input asp-for="ComponentModels[3 * i + j].Text"
+                                               label="@Model.ComponentModels[3 * i + j].Label"
+                                               id="@Model.ComponentModels[3 * i + j].Key">
+                                    </abp-input>
+                                }
+                            </abp-column>
+                        }
+                </abp-row>
+            }
+        </div>
+        <abp-row class="px-3">
+            <abp-column size-md="_6" class="text-left">
+                <abp-button id="ReportSearchButton"
+                            text="@L["Common:Search"].Value"
+                            icon="search"
+                            button-type="Primary" />
+            </abp-column>
+        </abp-row>
+    </abp-card>
+    <abp-card>
+        <abp-card-body>
+            <abp-table striped-rows="true" id="ReportDataTable" class="nowrap" />
+        </abp-card-body>
+    </abp-card>
+</section>

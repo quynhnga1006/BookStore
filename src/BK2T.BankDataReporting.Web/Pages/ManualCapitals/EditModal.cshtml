@@ -1,0 +1,30 @@
+﻿@page
+@model BK2T.BankDataReporting.Web.Pages.ManualCapitals.EditModalModel
+@{
+}
+@using Microsoft.AspNetCore.Mvc.Localization
+@inject IHtmlLocalizer<BankDataReportingResource> L
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@using BK2T.BankDataReporting.Localization
+@{
+    Layout = null;
+}
+<form asp-page="/ManualCapitals/EditModal">
+    <abp-modal scrollable="true" size="Large">
+        <abp-modal-header title="@L["ManualCapitals:Edit"].Value @Model.ManualCapital.Year"></abp-modal-header>
+        <abp-modal-body>
+            <h5> @L[$"ManualCapitals:CustomerType:" + (int)Model.ManualCapital.CustomerType]</h5>
+            <abp-input asp-for="ManualCapital.DepartmentId" value="@Model.ManualCapital.DepartmentId"></abp-input>
+
+            <abp-input asp-for="ManualCapital.CustomerType" value="@Model.ManualCapital.CustomerType"></abp-input>
+
+            <abp-input asp-for="ManualCapital.Year" value="@Model.ManualCapital.Year"></abp-input>
+
+            @for (int i = 0; i < Model.ManualCapital.MonthsCapital.Count; i++)
+            {
+                <abp-input asp-for="@Model.ManualCapital.MonthsCapital[i]" label="@Model.Label[i]"></abp-input>
+            }
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+    </abp-modal>
+</form>

@@ -1,0 +1,74 @@
+﻿@page
+@model BK2T.BankDataReporting.Web.Pages.ReportTemplates.Reports.EditModalModel
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@using BK2T.BankDataReporting.Localization
+@using BK2T.BankDataReporting.ReportFiles
+@inject IHtmlLocalizer<BankDataReportingResource> L
+@{
+    Layout = null;
+}
+<form asp-page="/ReportTemplates/Reports/EditModal" data-check-form-on-close="false">
+    <input type="hidden" data-val="true" id="ReportType" name="ReportType" value="@Model.ReportType">
+    <input type="hidden" data-val="true" id="Id" name="Id" value="@Model.Id">
+    <abp-modal scrollable="true" size="Large">
+        <abp-modal-header title="@L["Reports:Edit"].Value"></abp-modal-header>
+        <abp-modal-body>
+            <abp-input asp-for="Report.Name" />
+            <abp-row abp-border="Bottom_Dark">
+                <abp-column>
+                    @for (int i = 0; i < Model.Report.AllSettings.Count; ++i)
+                    {
+                        <abp-row>
+                            <abp-column>
+                                <label asp-for="Report.AllSettings[i].Label">@Model.Report.AllSettings[i].Label</label>
+                                <abp-input hidden="hidden" asp-for="Report.AllSettings[i].Name" value="@Model.Report.AllSettings[i].Name"></abp-input>
+                                <abp-input hidden="hidden" asp-for="Report.AllSettings[i].Label" value="@Model.Report.AllSettings[i].Label"></abp-input>
+                            </abp-column>
+                        </abp-row>
+                        <abp-row>
+                            <abp-column class="text-left">
+                                <abp-input asp-for="Report.AllSettings[i].IsVisible"></abp-input>
+                            </abp-column>
+                            <abp-column class="text-left">
+                                <abp-input asp-for="Report.AllSettings[i].IsQueryable"></abp-input>
+                            </abp-column>
+                            <abp-column class="text-left">
+                                <abp-select suppress-label="true" asp-for="Report.AllSettings[i].DataType" asp-items="@Html.GetEnumSelectList(typeof(ReportItemDataType))"></abp-select>
+                            </abp-column>
+                            <abp-column class="text-left">
+                                <abp-input asp-for="Report.AllSettings[i].IsGroupBy"></abp-input>
+                            </abp-column>
+                        </abp-row>
+                    }
+                </abp-column>
+            </abp-row>
+            <abp-row>
+                <abp-column>
+                    @for (int i = 0; i < Model.Report.NIISettings.Count; ++i)
+                    {
+                        <abp-row>
+                            <abp-column>
+                                <label asp-for="Report.NIISettings[i].Label">@Model.Report.NIISettings[i].Label</label>
+                                <abp-input hidden="hidden" asp-for="Report.NIISettings[i].Name" value="@Model.Report.NIISettings[i].Name"></abp-input>
+                                <abp-input hidden="hidden" asp-for="Report.NIISettings[i].Label" value="@Model.Report.NIISettings[i].Label"></abp-input>
+                            </abp-column>
+                        </abp-row>
+                        <abp-row>
+                            <abp-column class="text-left">
+                                <abp-input asp-for="Report.NIISettings[i].IsVisible"></abp-input>
+                            </abp-column>
+                            <abp-column class="text-left">
+                                <abp-input asp-for="Report.NIISettings[i].IsQueryable"></abp-input>
+                            </abp-column>
+                            <abp-column class="text-left">
+                                <abp-select suppress-label="true" asp-for="Report.NIISettings[i].DataType" asp-items="@Html.GetEnumSelectList(typeof(ReportItemDataType))"></abp-select>
+                            </abp-column>
+                        </abp-row>
+                    }
+                </abp-column>
+            </abp-row>
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+    </abp-modal>
+</form>

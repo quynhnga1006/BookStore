@@ -1,0 +1,46 @@
+﻿@page
+@using BK2T.BankDataReporting.Permissions
+@using BK2T.BankDataReporting.Localization
+@using BK2T.BankDataReporting.Web.Pages.Departments
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@model IndexModel
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<BankDataReportingResource> L
+@inject IAuthorizationService Authorization
+@{
+    PageLayout.Content.Title = L["Department"].Value;
+}
+@section styles
+{
+    <link rel='stylesheet' href="https://cdnjs.cloudflare.com/ajax/libs/tagify/4.9.8/tagify.min.css" />
+}
+@section scripts
+{
+    <abp-script src="/Pages/Departments/Index.js" />
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/tagify/4.9.8/tagify.min.js'></script>
+}
+
+<section class="px-3">
+    <abp-row class="py-3">
+        <abp-column size-md="_6">
+                <h3>@L["Departments"]</h3>
+        </abp-column>
+        <abp-column size-md="_6" class="text-right">
+            @if (await Authorization.IsGrantedAsync(BankDataReportingPermissions.Departments.Create))
+            {
+                <abp-button id="NewDepartmentButton"
+                            text="@L["Departments:Create"].Value"
+                            icon="plus"
+                            button-type="Primary" />
+            }
+        </abp-column>
+    </abp-row>
+   
+    <abp-card>
+        <abp-card-body>
+            <abp-table striped-rows="true" id="DepartmentTable" />
+        </abp-card-body>
+   </abp-card>
+</section>

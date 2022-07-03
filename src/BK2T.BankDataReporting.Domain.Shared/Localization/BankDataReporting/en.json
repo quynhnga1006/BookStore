@@ -1,0 +1,55 @@
+{
+  "culture": "en",
+  "texts": {
+    "Common:SuccessfullyDeleted": "Successfully deleted !",
+    "Common:DeletionConfirmationMessage": "Are you sure to delete it ?",
+    "Common:Search": "Search",
+
+    "BankDataReporting:00001": "Exist department with code {code}",
+    "BankDataReporting:00002": "Please upload file with format {0} only.",
+
+    "Permission:ReportFiles": "Report Files",
+    "Permission:Departments": "Departments",
+    "Permission:Reports": "Reports",
+    "Permission:GetAll": "View all reports",
+    "Permission:GetByOwnDepartment": "View reports of department (Department leader)",
+    "Permission:Create": "Create",
+    "Permission:Update": "Update",
+    "Permission:Delete": "Delete",
+    "Permission:FilterByDepartment": "Filter by department",
+    "Permission:FilterByUser": "Filter by user",
+
+    "Menu:Home": "Home",
+    "Menu:Departments": "Departments",
+    "Menu:ReportFiles": "Import data",
+    "Menu:Reports": "Report",
+    "Welcome": "Welcome",
+    "LongWelcomeMessage": "Welcome to the application. This is a startup project based on the ABP framework. For more information, visit abp.io.",
+
+    "Departments": "List of departments",
+    "Departments:Create": "Create department",
+    "Departments:Code": "Code",
+    "Departments:Name": "Name",
+    "Departments:CodeError": "Code must be a number and mustn't have spacing",
+    "Departments:NameError": "Name mustn't start by spacing",
+    "Departments:OldCode": "Old code",
+    "Departments:CustomerSegments": "Customer Segments",
+
+    "Users": "List of users",
+    "Users:Create": "New user",
+
+    "ReportFiles": "Import data",
+    "ReportFiles:Create": "Import data",
+    "ReportFiles:User": "User",
+    "ReportFiles:UploadDate": "Upload Date",
+    "ReportFiles:ReportDate": "Report Date",
+    "ReportFiles:ReportFile": "Report file",
+    "ReportFiles:ReportType": "Report type",
+    "ReportFiles:ReportType:Deposit": "Deposit",
+    "ReportFiles:ReportType:Loan": "Loan",
+    "ReportFiles:Status": "Status",
+    "ReportFiles:Status:Uploaded": "Uploaded",
+    "ReportFiles:Status:Imported": "Imported",
+    "ReportFiles:DateUploadReportFile": "Report date can't' be after today !"
+  }
+}

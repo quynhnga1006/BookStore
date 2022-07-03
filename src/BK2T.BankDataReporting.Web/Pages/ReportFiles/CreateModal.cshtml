@@ -1,0 +1,25 @@
+﻿@page
+@using BK2T.BankDataReporting.ReportFiles
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Mvc.Localization
+@using Volo.Abp.AspNetCore.Mvc.UI.Bootstrap.TagHelpers.Modal
+@using BK2T.BankDataReporting.Localization
+@using BK2T.BankDataReporting.Web.Pages.ReportFiles
+@using Volo.Abp.AspNetCore.Mvc.UI.Layout
+@model BK2T.BankDataReporting.Web.Pages.ReportFiles.CreateModalModel
+@inject IPageLayout PageLayout
+@inject IHtmlLocalizer<BankDataReportingResource> L
+@{
+    Layout = null;
+}
+<form asp-page="/ReportFiles/CreateModal" data-check-form-on-close="false">
+    <abp-modal size="Large">
+        <abp-modal-header title="@L["ReportFiles:Create"].Value"></abp-modal-header>
+        <abp-modal-body>
+            <abp-input asp-for="ReportFile.ReportDate"/>
+            <abp-select asp-for="ReportFile.ReportType" asp-items="@Html.GetEnumSelectList(typeof(ReportType))"/>              
+            <abp-input asp-for="ReportFile.FileData" />
+        </abp-modal-body>
+        <abp-modal-footer buttons="@(AbpModalButtons.Cancel|AbpModalButtons.Save)"></abp-modal-footer>
+    </abp-modal>
+</form>
